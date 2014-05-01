@@ -1,35 +1,44 @@
-App = Ember.Application.create();
+Basketball = Ember.Application.create();
 
-App.Router.map(function(){
-  this.resource('about');
-  this.resource('posts', function() {
-    this.resource('post', { path: ':post_id' });
+DS.LSAdapter.create({
+});
+
+Basketball.ApplicationAdapter = DS.LSAdapter.extend({
+});
+
+Basketball.ApplicationSerializer = DS.LSSerializer.extend();
+
+Basketball.Router.map(function(){
+  this.resource('teams', function(){
+    this.resource('team', { path: ':team_id' });
+  });
+  this.resource('players', function() {
+    this.resource('player', { path: ':player_id' });
   });
 });
 
-App.PostsRoute = Ember.Route.extend({
+
+Basketball.TeamsRoute = Ember.Route.extend({
   model: function() {
-    return posts;
+    return this.store.find('team');
   }
 });
 
-App.PostRoute = Ember.Route.extend({
+Basketball.PlayersRoute = Ember.Route.extend({
+  model: function() {
+    return this.store.find('player');
+  }
+});
+
+Basketball.TeamRoute = Ember.Route.extend({
   model: function(params) {
-    return posts.findBy('id', params.post_id);
+    return this.store.find('team').findBy('id', params.team_id);
   }
 });
 
-App.PostController = Ember.ObjectController.extend({
-  isEditing: false,
-
-  actions: {
-    edit: function() {
-      this.set('isEditing', true);
-    },
-
-    doneEditing: function() {
-      this.set('isEditing', false);
-    }
+Basketball.PlayerRoute = Ember.Route.extend({
+  model: function(params) {
+    return this.store.find('player').findBy('id', params.player_id);
   }
 });
 
